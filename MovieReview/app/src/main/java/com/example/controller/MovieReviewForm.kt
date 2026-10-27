@@ -86,41 +86,47 @@ class MovieReviewForm : AppCompatActivity() {
             val stars = ratingMovie.rating.toInt()
             val selectedGenre = Genre.entries[spGenre.selectedItemPosition]
 
-            if (name.isEmpty() || review.isEmpty()) {
+            if (name.isEmpty()) {
+                etMovieName.error = "Preencha o título do filme"
+                etMovieName.requestFocus()
+                Toast.makeText(this, "Preencha o título do filme.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (review.isEmpty()) {
+                etMovieReview.error = "Preencha a resenha do filme"
+                etMovieReview.requestFocus()
+                Toast.makeText(this, "Preencha a resenha do filme.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val movie = Movie(
+                id = movieId ?: 0,
+                name = name,
+                review = review,
+                stars = stars,
+                genre = selectedGenre
+            )
+            
+            val success = if (movieId != null) {
+                moviesDAO.updateMovie(movie) > 0
+            } else {
+                moviesDAO.insertMovie(movie) != -1L
+            }
+
+            if (success) {
                 Toast.makeText(
                     this,
-                    "Preencha o nome e a resenha do filme.",
+                    if (movieId != null) "Filme atualizado com sucesso!" else "Filme salvo com sucesso!",
                     Toast.LENGTH_SHORT
                 ).show()
+                finish()
             } else {
-                val movie = Movie(
-                    id = movieId ?: 0,
-                    name = name,
-                    review = review,
-                    stars = stars,
-                    genre = selectedGenre
-                )
-                
-                val success = if (movieId != null) {
-                    moviesDAO.updateMovie(movie) > 0
-                } else {
-                    moviesDAO.insertMovie(movie) != -1L
-                }
-
-                if (success) {
-                    Toast.makeText(
-                        this,
-                        if (movieId != null) "Filme atualizado com sucesso!" else "Filme salvo com sucesso!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Erro ao salvar o filme.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Toast.makeText(
+                    this,
+                    "Erro ao salvar o filme.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 

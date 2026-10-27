@@ -2,12 +2,16 @@ package com.example.controller
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ExpandableListView
 import android.widget.ListView
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,11 +22,16 @@ import com.example.model.Movie
 import com.example.moviereview.R
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.materialswitch.MaterialSwitch
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var listMovies: ListView
     private lateinit var expandableListMovies: ExpandableListView
+    private lateinit var tvEmptyState: TextView
+    private lateinit var tvTotalMovies: TextView
+    private lateinit var tvAverageRating: TextView
+    private lateinit var etSearchMovie: EditText
     private lateinit var spFilterGenre: Spinner
     private lateinit var spFilterStars: Spinner
     private lateinit var swGroupByGenre: MaterialSwitch
@@ -57,6 +66,10 @@ class MainActivity : AppCompatActivity() {
         btnAddMovie = findViewById(R.id.btnAddMovie)
         listMovies = findViewById(R.id.listMovies)
         expandableListMovies = findViewById(R.id.expandableListMovies)
+        tvEmptyState = findViewById(R.id.tvEmptyState)
+        tvTotalMovies = findViewById(R.id.tvTotalMovies)
+        tvAverageRating = findViewById(R.id.tvAverageRating)
+        etSearchMovie = findViewById(R.id.etSearchMovie)
         spFilterGenre = findViewById(R.id.spFilterGenre)
         spFilterStars = findViewById(R.id.spFilterStars)
         swGroupByGenre = findViewById(R.id.swGroupByGenre)
@@ -76,9 +89,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         expandableListMovies.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
+            val searchQuery = etSearchMovie.text.toString().trim()
             val genre = currentGroupedGenres.getOrNull(groupPosition)
             if (genre != null) {
-                val moviesInGenre = moviesList.filter { it.genre == genre }
+                val moviesInGenre = moviesList.filter { movie ->
+                    movie.genre == genre && (searchQuery.isEmpty() || movie.name.contains(searchQuery, ignoreCase = true))
+                }
                 if (childPosition in moviesInGenre.indices) {
                     val selectedMovie = moviesInGenre[childPosition]
                     openMovieForm(selectedMovie)
@@ -129,18 +145,18 @@ class MainActivity : AppCompatActivity() {
         spFilterGenre.onItemSelectedListener = listener
         spFilterStars.onItemSelectedListener = listener
 
+        etSearchMovie.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                applyFiltersAndRender()
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         swGroupByGenre.setOnCheckedChangeListener { _, isChecked ->
             isGroupedMode = isChecked
             spFilterGenre.isEnabled = !isChecked
             spFilterStars.isEnabled = !isChecked
-
-            if (isChecked) {
-                listMovies.visibility = View.GONE
-                expandableListMovies.visibility = View.VISIBLE
-            } else {
-                listMovies.visibility = View.VISIBLE
-                expandableListMovies.visibility = View.GONE
-            }
 
             applyFiltersAndRender()
         }
@@ -156,23 +172,48 @@ class MainActivity : AppCompatActivity() {
         applyFiltersAndRender()
     }
 
-    private fun applyFiltersAndRender() {
-        if (isGroupedMode) {
-            currentGroupedGenres = Genre.entries.sortedWith(
-                compareByDescending<Genre> { genre -> moviesList.count { it.genre == genre } }
-                    .thenBy { it.ordinal }
-            )
+    private fun updateHeaderStats(movies: List<Movie>) {
+        val total = movies.size
+        val avg = if (total > 0) movies.map { it.stars }.average() else 0.0
+        tvTotalMovies.text = "$total filme(s)"
+        tvAverageRating.text = String.format(Locale.getDefault(), "Média: %.1f ★", avg)
+    }
 
-            val moviesByGenre = currentGroupedGenres.associateWith { genre ->
-                moviesList.filter { it.genre == genre }
+    private fun applyFiltersAndRender() {
+        val searchQuery = etSearchMovie.text.toString().trim()
+
+        if (isGroupedMode) {
+            val searchFilteredMovies = moviesList.filter { movie ->
+                searchQuery.isEmpty() || movie.name.contains(searchQuery, ignoreCase = true)
             }
 
-            val expandableAdapter = GenreExpandableAdapter(this, currentGroupedGenres, moviesByGenre)
-            expandableListMovies.setAdapter(expandableAdapter)
+            updateHeaderStats(searchFilteredMovies)
 
-            for (i in currentGroupedGenres.indices) {
-                if (moviesByGenre[currentGroupedGenres[i]]?.isNotEmpty() == true) {
-                    expandableListMovies.expandGroup(i)
+            if (searchFilteredMovies.isEmpty()) {
+                listMovies.visibility = View.GONE
+                expandableListMovies.visibility = View.GONE
+                tvEmptyState.visibility = View.VISIBLE
+            } else {
+                listMovies.visibility = View.GONE
+                expandableListMovies.visibility = View.VISIBLE
+                tvEmptyState.visibility = View.GONE
+
+                currentGroupedGenres = Genre.entries.sortedWith(
+                    compareByDescending<Genre> { genre -> searchFilteredMovies.count { it.genre == genre } }
+                        .thenBy { it.ordinal }
+                )
+
+                val moviesByGenre = currentGroupedGenres.associateWith { genre ->
+                    searchFilteredMovies.filter { it.genre == genre }
+                }
+
+                val expandableAdapter = GenreExpandableAdapter(this, currentGroupedGenres, moviesByGenre)
+                expandableListMovies.setAdapter(expandableAdapter)
+
+                for (i in currentGroupedGenres.indices) {
+                    if (moviesByGenre[currentGroupedGenres[i]]?.isNotEmpty() == true) {
+                        expandableListMovies.expandGroup(i)
+                    }
                 }
             }
         } else {
@@ -182,6 +223,8 @@ class MainActivity : AppCompatActivity() {
             val minStars = if (selectedStarPos > 0) selectedStarPos else 0
 
             filteredList = moviesList.filter { movie ->
+                val matchesName = searchQuery.isEmpty() || movie.name.contains(searchQuery, ignoreCase = true)
+
                 val matchesGenre = if (selectedGenrePos > 0) {
                     val genre = Genre.entries[selectedGenrePos - 1]
                     movie.genre == genre
@@ -191,11 +234,23 @@ class MainActivity : AppCompatActivity() {
 
                 val matchesStars = movie.stars >= minStars
 
-                matchesGenre && matchesStars
+                matchesName && matchesGenre && matchesStars
             }
 
-            val adapter = MovieAdapter(this, filteredList)
-            listMovies.adapter = adapter
+            updateHeaderStats(filteredList)
+
+            if (filteredList.isEmpty()) {
+                listMovies.visibility = View.GONE
+                expandableListMovies.visibility = View.GONE
+                tvEmptyState.visibility = View.VISIBLE
+            } else {
+                listMovies.visibility = View.VISIBLE
+                expandableListMovies.visibility = View.GONE
+                tvEmptyState.visibility = View.GONE
+
+                val adapter = MovieAdapter(this, filteredList)
+                listMovies.adapter = adapter
+            }
         }
     }
 }
