@@ -70,4 +70,40 @@ class MoviesDAO(private val context: Context) {
 
         return result
     }
+
+    fun updateMovie(movie: Movie): Int {
+        val db = dbHelper.writableDatabase
+
+        val values = ContentValues().apply {
+            put("name", movie.name)
+            put("review", movie.review)
+            put("stars", movie.stars)
+            put("genre", movie.genre.name)
+        }
+
+        val result = db.update(
+            DBHelper.TABLE_NAME,
+            values,
+            "id = ?",
+            arrayOf(movie.id.toString())
+        )
+
+        db.close()
+
+        return result
+    }
+
+    fun deleteMovie(id: Int): Int {
+        val db = dbHelper.writableDatabase
+
+        val result = db.delete(
+            DBHelper.TABLE_NAME,
+            "id = ?",
+            arrayOf(id.toString())
+        )
+
+        db.close()
+
+        return result
+    }
 }

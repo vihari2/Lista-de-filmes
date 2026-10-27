@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -127,7 +128,20 @@
             android:paddingTop="14dp"
             android:paddingBottom="14dp"
             android:textSize="16sp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnDeleteMovie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excluir Filme"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#D32F2F"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textSize="16sp"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

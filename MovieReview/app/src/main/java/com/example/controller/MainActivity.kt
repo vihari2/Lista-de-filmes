@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var listMovies: ListView
     private lateinit var moviesDAO: MoviesDAO
+    private var moviesList: List<com.example.model.Movie> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,18 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MovieReviewForm::class.java)
             startActivity(intent)
         }
+
+        listMovies.setOnItemClickListener { _, _, position, _ ->
+            val selectedMovie = moviesList[position]
+            val intent = Intent(this, MovieReviewForm::class.java).apply {
+                putExtra("MOVIE_ID", selectedMovie.id)
+                putExtra("MOVIE_NAME", selectedMovie.name)
+                putExtra("MOVIE_REVIEW", selectedMovie.review)
+                putExtra("MOVIE_STARS", selectedMovie.stars)
+                putExtra("MOVIE_GENRE", selectedMovie.genre.name)
+            }
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
@@ -52,8 +65,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMovies() {
-        val movies = moviesDAO.getAllMovies()
-        val movieTitles = movies.map { "${it.name} (${it.genre.displayName}) - ${it.stars}★" }
+        moviesList = moviesDAO.getAllMovies()
+        val movieTitles = moviesList.map { "${it.name} (${it.genre.displayName}) - ${it.stars}★" }
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, movieTitles)
         listMovies.adapter = adapter
     }
