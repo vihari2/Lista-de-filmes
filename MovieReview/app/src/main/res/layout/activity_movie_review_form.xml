@@ -5,143 +5,170 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
+    android:background="@color/bg_light"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Novo Filme"
-            android:textColor="#1A1A1A"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:paddingTop="12dp"
-            android:paddingBottom="6dp"/>
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/surface_light"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Adicione um filme à sua coleção"
-            android:textColor="#666666"
-            android:textSize="15sp"
-            android:paddingBottom="28dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Título do filme"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"/>
+                <TextView
+                    android:id="@+id/tvFormTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Avaliar Filme"
+                    android:textColor="@color/text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/etMovieName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ex.: Interestelar"
-            android:inputType="textCapSentences"
-            android:textColor="#1A1A1A"
-            android:textColorHint="#999999"
-            android:padding="14dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="20dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Preencha os detalhes e sua opinião"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:paddingBottom="24dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Gênero"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Título do filme"
+                    android:layout_marginBottom="16dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
 
-        <Spinner
-            android:id="@+id/spGenre"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:padding="8dp"
-            android:layout_marginBottom="20dp"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMovieName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sua nota"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <RatingBar
-            android:id="@+id/ratingMovie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5"
-            android:stepSize="1"
-            android:rating="3"
-            android:progressTint="#FBBF24"
-            android:layout_marginBottom="20dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gênero"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="6dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Comentário"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"/>
+                <Spinner
+                    android:id="@+id/spGenre"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_spinner_rounded"
+                    android:padding="8dp"
+                    android:layout_marginBottom="20dp"/>
 
-        <EditText
-            android:id="@+id/etMovieReview"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:hint="O que você achou do filme?"
-            android:gravity="top"
-            android:inputType="textCapSentences|textMultiLine"
-            android:textColor="#1A1A1A"
-            android:textColorHint="#999999"
-            android:padding="14dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="28dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sua Nota"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="6dp"/>
 
-        <Button
-            android:id="@+id/btnSaveMovie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Salvar filme"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginBottom="20dp">
 
-        <Button
-            android:id="@+id/btnCancelMovie"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cancelar"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"/>
+                    <RatingBar
+                        android:id="@+id/ratingMovie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:numStars="5"
+                        android:stepSize="1"
+                        android:rating="3"
+                        android:progressTint="@color/star_gold"
+                        android:secondaryProgressTint="@color/star_gold"/>
 
-        <Button
-            android:id="@+id/btnDeleteMovie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Excluir Filme"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#D32F2F"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone"/>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Sua resenha / comentário"
+                    android:layout_marginBottom="24dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMovieReview"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveMovie"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Salvar Filme"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="@color/primary"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelMovie"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Cancelar"
+                    android:textSize="16sp"
+                    app:cornerRadius="14dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDeleteMovie"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Excluir Filme"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="@color/delete_red"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

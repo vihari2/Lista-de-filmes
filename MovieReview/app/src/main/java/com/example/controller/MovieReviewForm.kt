@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +33,7 @@ class MovieReviewForm : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val density = resources.displayMetrics.density
-            val paddingPx = (20 * density).toInt()
+            val paddingPx = (16 * density).toInt()
             v.setPadding(
                 systemBars.left + paddingPx,
                 systemBars.top + paddingPx,
@@ -42,6 +43,7 @@ class MovieReviewForm : AppCompatActivity() {
             insets
         }
 
+        val tvFormTitle = findViewById<TextView>(R.id.tvFormTitle)
         val etMovieName = findViewById<EditText>(R.id.etMovieName)
         val spGenre = findViewById<Spinner>(R.id.spGenre)
         val ratingMovie = findViewById<RatingBar>(R.id.ratingMovie)
@@ -49,7 +51,7 @@ class MovieReviewForm : AppCompatActivity() {
 
         val btnSaveMovie = findViewById<Button>(R.id.btnSaveMovie)
         val btnCancelMovie = findViewById<Button>(R.id.btnCancelMovie)
-        val btnDeleteMovie = findViewById<Button>(R.id.btnDeleteMovie) // Você precisará adicionar este botão no XML
+        val btnDeleteMovie = findViewById<Button>(R.id.btnDeleteMovie)
 
         val genreAdapter = ArrayAdapter(
             this,
@@ -59,9 +61,9 @@ class MovieReviewForm : AppCompatActivity() {
         genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spGenre.adapter = genreAdapter
 
-        // Verifica se é uma edição
         if (intent.hasExtra("MOVIE_ID")) {
             movieId = intent.getIntExtra("MOVIE_ID", -1)
+            tvFormTitle.text = "Editar Avaliação"
             etMovieName.setText(intent.getStringExtra("MOVIE_NAME"))
             etMovieReview.setText(intent.getStringExtra("MOVIE_REVIEW"))
             ratingMovie.rating = intent.getIntExtra("MOVIE_STARS", 0).toFloat()
@@ -74,6 +76,7 @@ class MovieReviewForm : AppCompatActivity() {
             
             btnDeleteMovie.visibility = View.VISIBLE
         } else {
+            tvFormTitle.text = "Avaliar Filme"
             btnDeleteMovie.visibility = View.GONE
         }
 

@@ -20,7 +20,7 @@ class MoviesDAO(private val context: Context) {
             null,
             null,
             null,
-            null
+            "id DESC"
         )
 
         val movies = mutableListOf<Movie>()
